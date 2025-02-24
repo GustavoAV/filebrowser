@@ -40,21 +40,32 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if .Values.command }}
           command:
+          {{- if .Values.command }}
             {{- toYaml .Values.command | nindent 12 }}
+          {{- else }}
+            - /bin/sh
           {{- end }}
           {{- if .Values.args }}
           args:
             {{- toYaml .Values.args | nindent 12 }}
           {{- else }}
           args:
-            - --address
-            - "0.0.0.0"
-            - --database
-            - /database/filebrowser.db
-            - --port
-            - "8080"
+            - -euc
+            - |
+              exec /filebrowser \
+                --address "0.0.0.0" \
+                --port "8080" \
+                --database /database/filebrowser.db \
+                --username "$ADMIN_USERNAME" \
+                --password "$(/filebrowser hash $ADMIN_PASSWORD)"
+          {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ include "filebrowser.fullname" . }}-auth
+          {{- with .Values.envVars }}
+          env:
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           ports:
             - name: http

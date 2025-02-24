@@ -18,6 +18,12 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
+# Admin username and password
+auth:
+  adminUsername: admin
+  # If empty, generates a random 50 characters alphanumeric password
+  adminPassword: ""
+
 # Custom entrypoint and args
 # If empty, uses default values
 command: []
@@ -29,6 +35,7 @@ envVars: []
   # - name: FOO
   #   value: fighters
 
+# Persistence (PVC) options
 persistence:
   enabled: true
   database:
