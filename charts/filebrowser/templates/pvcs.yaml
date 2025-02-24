@@ -1,0 +1,31 @@
+{{- if .Values.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "filebrowser.fullname" . }}-database
+  labels:
+    {{- include "filebrowser.labels" . | nindent 4 }}
+spec:
+  accessModes: {{ .Values.persistence.database.accessModes }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.database.size | quote }}
+{{- if .Values.persistence.database.storageClassName }}
+  storageClassName: {{ .Values.persistence.database.storageClassName | quote }}
+{{- end }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "filebrowser.fullname" . }}-files
+  labels:
+    {{- include "filebrowser.labels" . | nindent 4 }}
+spec:
+  accessModes: {{ .Values.persistence.files.accessModes }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.files.size | quote }}
+{{- if .Values.persistence.files.storageClassName }}
+  storageClassName: {{ .Values.persistence.files.storageClassName | quote }}
+{{- end }}
+{{- end }}
